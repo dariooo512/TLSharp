@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TeleSharp.TL;
 namespace TeleSharp.TL
 {
-    [TLObject(-627372787)]
+	[TLObject(-627372787)]
     public class TLRequestInvokeWithLayer : TLMethod
     {
         public override int Constructor
@@ -18,34 +18,34 @@ namespace TeleSharp.TL
             }
         }
 
-        public int Layer { get; set; }
-        public TLObject Query { get; set; }
-        public TLObject Response { get; set; }
+                public Type X {get;set;}
+        public int Layer {get;set;}
+        public TLObject Response{ get; set;}
 
 
-        public void ComputeFlags()
-        {
-
-        }
+		public void ComputeFlags()
+		{
+			
+		}
 
         public override void DeserializeBody(BinaryReader br)
         {
-            Layer = br.ReadInt32();
-            Query = (TLObject)ObjectUtils.DeserializeObject(br);
+            X = (Type)ObjectUtils.DeserializeObject(br);
+Layer = br.ReadInt32();
 
         }
 
         public override void SerializeBody(BinaryWriter bw)
         {
-            bw.Write(Constructor);
-            bw.Write(Layer);
-            ObjectUtils.SerializeObject(Query, bw);
+			bw.Write(Constructor);
+            ObjectUtils.SerializeObject(X,bw);
+bw.Write(Layer);
 
         }
-        public override void DeserializeResponse(BinaryReader br)
-        {
-            Response = (TLObject)ObjectUtils.DeserializeObject(br);
+		public override void DeserializeResponse(BinaryReader br)
+		{
+			Response = (TLObject)ObjectUtils.DeserializeObject(br);
 
-        }
+		}
     }
 }
