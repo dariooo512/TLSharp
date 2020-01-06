@@ -64,11 +64,11 @@ bw.Write(ApiId);
 StringUtil.Serialize(DeviceModel,bw);
 StringUtil.Serialize(SystemVersion,bw);
 StringUtil.Serialize(AppVersion,bw);
-StringUtil.Serialize(SystemLangCode,bw);
-StringUtil.Serialize(LangPack,bw);
-StringUtil.Serialize(LangCode,bw);
-if ((Flags & 1) != 0)
-ObjectUtils.SerializeObject(Proxy,bw);
+//StringUtil.Serialize(SystemLangCode,bw);
+//StringUtil.Serialize(LangPack,bw);
+//StringUtil.Serialize(LangCode,bw);
+//if ((Flags & 1) != 0)
+//ObjectUtils.SerializeObject(Proxy,bw);
 
         }
 		public override void DeserializeResponse(BinaryReader br)

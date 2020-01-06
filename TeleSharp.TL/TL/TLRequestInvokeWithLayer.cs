@@ -18,7 +18,7 @@ namespace TeleSharp.TL
             }
         }
 
-                public Type X {get;set;}
+                public TLObject X {get;set;}
         public int Layer {get;set;}
         public TLObject Response{ get; set;}
 
@@ -30,7 +30,7 @@ namespace TeleSharp.TL
 
         public override void DeserializeBody(BinaryReader br)
         {
-            X = (Type)ObjectUtils.DeserializeObject(br);
+            X = (TLObject)ObjectUtils.DeserializeObject(br);
 Layer = br.ReadInt32();
 
         }

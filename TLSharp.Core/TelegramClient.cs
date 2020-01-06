@@ -65,17 +65,15 @@ namespace TLSharp.Core
             _sender = new MtProtoSender(_transport, _session);
 
             //set-up layer
-            var config = new TLRequestGetConfig();
             var request = new TLRequestInitConnection()
             {
                 ApiId = _apiId,
                 AppVersion = "1.0.0",
                 DeviceModel = "PC",
                 LangCode = "en",
-                Query = config,
                 SystemVersion = "Win 10.0"
             };
-            var invokewithLayer = new TLRequestInvokeWithLayer() { Layer = 66, Query = request };
+            var invokewithLayer = new TLRequestInvokeWithLayer() { Layer = 106, X = request };
             await _sender.Send(invokewithLayer);
             await _sender.Receive(invokewithLayer);
 
@@ -146,14 +144,16 @@ namespace TLSharp.Core
 
         public async Task<bool> IsPhoneRegisteredAsync(string phoneNumber)
         {
-            if (String.IsNullOrWhiteSpace(phoneNumber))
-                throw new ArgumentNullException(nameof(phoneNumber));
+            throw new NotImplementedException();
 
-            var authCheckPhoneRequest = new TLRequestCheckPhone() { PhoneNumber = phoneNumber };
+            //if (String.IsNullOrWhiteSpace(phoneNumber))
+            //    throw new ArgumentNullException(nameof(phoneNumber));
 
-            await RequestWithDcMigration(authCheckPhoneRequest);
+            //var authCheckPhoneRequest = new TLRequestCheckPhone() { PhoneNumber = phoneNumber };
 
-            return authCheckPhoneRequest.Response.PhoneRegistered;
+            //await RequestWithDcMigration(authCheckPhoneRequest);
+
+            //return authCheckPhoneRequest.Response.PhoneRegistered;
         }
 
         public async Task<string> SendCodeRequestAsync(string phoneNumber)
@@ -183,9 +183,9 @@ namespace TLSharp.Core
 
             await RequestWithDcMigration(request);
 
-            OnUserAuthenticated(((TLUser)request.Response.User));
+            OnUserAuthenticated((TLUser)((TLAuthorization)request.Response).User);
 
-            return ((TLUser)request.Response.User);
+            return (TLUser)((TLAuthorization)request.Response).User;
         }
         
         public async Task<TLPassword> GetPasswordSetting()
@@ -199,31 +199,32 @@ namespace TLSharp.Core
 
         public async Task<TLUser> MakeAuthWithPasswordAsync(TLPassword password, string password_str)
         {
+            throw new NotImplementedException();
 
-            byte[] password_Bytes = Encoding.UTF8.GetBytes(password_str);
-            IEnumerable<byte> rv = password.CurrentSalt.Concat(password_Bytes).Concat(password.CurrentSalt);
+            //byte[] password_Bytes = Encoding.UTF8.GetBytes(password_str);
+            //IEnumerable<byte> rv = password.CurrentSalt.Concat(password_Bytes).Concat(password.CurrentSalt);
 
-            SHA256Managed hashstring = new SHA256Managed();
-            var password_hash = hashstring.ComputeHash(rv.ToArray());
+            //SHA256Managed hashstring = new SHA256Managed();
+            //var password_hash = hashstring.ComputeHash(rv.ToArray());
 
-            var request = new TLRequestCheckPassword() { PasswordHash = password_hash };
+            //var request = new TLRequestCheckPassword() { PasswordHash = password_hash };
 
-            await RequestWithDcMigration(request);
+            //await RequestWithDcMigration(request);
 
-            OnUserAuthenticated(((TLUser)request.Response.User));
+            //OnUserAuthenticated((TLUser)((TLAuthorization)request.Response).User);
 
-            return ((TLUser)request.Response.User);
+            //return (TLUser)((TLAuthorization)request.Response).User;
         }
 
-        public async Task<TLUser> SignUpAsync(string phoneNumber, string phoneCodeHash, string code, string firstName, string lastName)
+        public async Task<TLUser> SignUpAsync(string phoneNumber, string phoneCodeHash, /*string code,*/ string firstName, string lastName)
         {
-            var request = new TLRequestSignUp() { PhoneNumber = phoneNumber, PhoneCode = code, PhoneCodeHash = phoneCodeHash, FirstName = firstName, LastName = lastName };
+            var request = new TLRequestSignUp() { PhoneNumber = phoneNumber,/* PhoneCode = code,*/ PhoneCodeHash = phoneCodeHash, FirstName = firstName, LastName = lastName };
             
             await RequestWithDcMigration(request);
 
-            OnUserAuthenticated(((TLUser)request.Response.User));
+            OnUserAuthenticated((TLUser)((TLAuthorization)request.Response).User);
 
-            return ((TLUser)request.Response.User);
+            return (TLUser)((TLAuthorization)request.Response).User;
         }
         public async Task<T> SendRequestAsync<T>(TLMethod methodToExecute)
         {
@@ -239,7 +240,7 @@ namespace TLSharp.Core
             if (!IsUserAuthorized())
                 throw new InvalidOperationException("Authorize user first!");
 
-            var req = new TLRequestGetContacts() { Hash = "" };
+            var req = new TLRequestGetContacts() { Hash = 0 };
 
             return await SendRequestAsync<TLContacts>(req);
         }
@@ -293,13 +294,13 @@ namespace TLSharp.Core
                 RandomId = Helpers.GenerateRandomLong(),
                 Background = false,
                 ClearDraft = false,
-                Media = new TLInputMediaUploadedPhoto() { File = file, Caption = caption },
+                
+                Media = new TLInputMediaUploadedPhoto() { File = file},
                 Peer = peer
             });
         }
 
-        public async Task<TLAbsUpdates> SendUploadedDocument(
-            TLAbsInputPeer peer, TLAbsInputFile file, string caption, string mimeType, TLVector<TLAbsDocumentAttribute> attributes)
+        public async Task<TLAbsUpdates> SendUploadedDocument(TLAbsInputPeer peer, TLAbsInputFile file, string caption, string mimeType, TLVector<TLAbsDocumentAttribute> attributes)
         {
             return await SendRequestAsync<TLAbsUpdates>(new TLRequestSendMedia()
             {
@@ -309,7 +310,6 @@ namespace TLSharp.Core
                 Media = new TLInputMediaUploadedDocument()
                 {
                     File = file,
-                    Caption = caption,
                     MimeType = mimeType,
                     Attributes = attributes
                 },

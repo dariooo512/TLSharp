@@ -18,7 +18,7 @@ namespace TeleSharp.TL
             }
         }
 
-             public TLVector<TLJSONObjectValue> Value {get;set;}
+             public TLVector<TLJsonObjectValue> Value {get;set;}
 
 
 		public void ComputeFlags()
@@ -28,7 +28,7 @@ namespace TeleSharp.TL
 
         public override void DeserializeBody(BinaryReader br)
         {
-            Value = (TLVector<TLJSONObjectValue>)ObjectUtils.DeserializeVector<TLJSONObjectValue>(br);
+            Value = ObjectUtils.DeserializeVector<TLJsonObjectValue>(br);
 
         }
 
